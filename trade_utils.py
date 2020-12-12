@@ -1,3 +1,4 @@
+# Collection of utilities used by the Trade object
 import logging
 import pdb
 import datetime as dt
@@ -132,7 +133,9 @@ def calc_trade_session(trade):
 
 def calc_pips_c_trend(trade):
     '''
-    Function to calculate the pips_c_trend
+    Function to calculate the pips_c_trend value.
+    This value represents the average number of pips for each candle from
+    trade.trend_i up to trade.start
 
     Parameters
     ----------
@@ -141,32 +144,11 @@ def calc_pips_c_trend(trade):
 
     Returns
     -------
-    Float with number of pips for the trend_i
+    Float
     '''
-    pdb.set_trace()
-    sub_cl = trade.period.slice(start=trade.trendi,
-                                end =self.trade.start)
-    """
-    conn = Connect(url=CONFIG.get('oanda_api', 'url'),
-                   instrument=self.trade.pair,
-                   granularity=self.trade.timeframe)
-    oanda.data = self.ser_data_obj.slice(start=self.trend_i,
-                                                 end=self.trade.start)
-            resp = 200
+    sub_cl = trade.period.slice(start=trade.trend_i,
+                                end =trade.start)
 
-        if resp == 200:
-
-            candle_list = oanda.fetch_candleset()
-
-            cl = CandleList(candle_list,
-                            settingf=self.settingf,
-                            settings=self.settings,
-                            instrument=self.trade.pair,
-                            granularity=self.trade.timeframe,
-                            id=self.trade.id,
-                            type=self.trade.type)
-
-            pips_c_trend = cl.get_length_pips()/cl.get_length_candles()
+    pips_c_trend = sub_cl.get_length_pips()/sub_cl.get_length_candles()
 
     return round(pips_c_trend, 1)
-    """

@@ -127,8 +127,7 @@ class Trade(object):
         elif self.type == "short":
             candle = merged_s.get_lowest()
 
-        return datetime.strptime(candle['time'],
-                                 '%Y-%m-%dT%H:%M:%S.%fZ')
+        return candle['time']
 
     def fetch_candlelist(self):
         '''

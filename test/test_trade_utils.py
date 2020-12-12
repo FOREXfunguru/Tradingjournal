@@ -7,14 +7,6 @@ import os
 from trade_utils import *
 from trade import Trade
 
-@pytest.fixture
-def clean_tmp():
-    yield
-    print("Cleanup files")
-    files = glob.glob(os.getenv('DATADIR')+"/imgs/pivots/*")
-    for f in files:
-        os.remove(f)
-
 @pytest.mark.parametrize("pair,"
                          "timeframe,"
                          "id,"
@@ -51,7 +43,8 @@ def test_is_entry_onrsi(pair, id, timeframe, start, type, SR, SL, TP, entry, ent
         SR=SR,
         SL=SL,
         TP=TP,
-        entry=entry)
+        entry=entry,
+        strat='counter_b1')
 
     assert entry_onrsi == is_entry_onrsi(t)
 
