@@ -49,14 +49,6 @@ def test_get_pivots(pair, id, timeframe, start, type, SR, SL, TP, entry, dates, 
 
     assert dates == times
 
-def test_get_score(t_object, clean_tmp):
-    """
-    Test 'get_score' function
-    """
-    pl = get_pivots(t_object)
-    get_score(pl)
-    assert get_score(pl) == 2816.4
-
 @pytest.mark.parametrize("pair,"
                          "id,"
                          "start,"

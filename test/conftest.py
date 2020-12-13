@@ -14,6 +14,14 @@ def env_setup(monkeypatch):
     monkeypatch.setenv('CONFIG_FILE', '../data/settings.ini')
 
 @pytest.fixture
+def clean_tmp():
+    yield
+    print("Cleanup files")
+    files = glob.glob(os.getenv('DATADIR')+"/imgs/pivots/*")
+    for f in files:
+        os.remove(f)
+
+@pytest.fixture
 def t_object():
     '''Returns a Trade object'''
 
@@ -37,11 +45,3 @@ def tjO(scope="session"):
     td = TradeJournal(url=os.getenv('DATADIR')+"/testCounter.xlsx",
                       worksheet="trading_journal")
     return td
-
-@pytest.fixture
-def clean_tmp():
-    yield
-    print("Cleanup files")
-    files = glob.glob(os.getenv('DATADIR')+"/imgs/pivots/*")
-    for f in files:
-        os.remove(f)
