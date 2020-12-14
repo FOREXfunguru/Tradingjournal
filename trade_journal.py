@@ -5,7 +5,7 @@ import pdb
 import logging
 from trade import Trade
 from openpyxl import load_workbook, Workbook
-from pivot import PivotList
+from pivot_list import PivotList
 from config import CONFIG
 
 # create logger
