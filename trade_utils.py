@@ -152,3 +152,36 @@ def calc_pips_c_trend(trade):
     pips_c_trend = sub_cl.get_length_pips()/sub_cl.get_length_candles()
 
     return round(pips_c_trend, 1)
+
+def get_trade_type(dt, clObj):
+    """
+    Function to get the type of a Trade (short/long)
+
+    Parameters
+    ----------
+    dt : datetime object
+        This will be the datetime for the IC candle
+    clObj : CandleList object
+
+    Returns
+    -------
+    str: type
+         'short'/'long'
+    """
+    if dt != clObj.data['candles'][-1]['time']:
+        dt = clObj.data['candles'][-1]['time']
+
+    PL = clObj.get_pivotlist(th_bounces=CONFIG.getfloat('pivots', 'th_bounces'))
+
+    # now, get the Pivot matching the datetime for the IC+1 candle
+    if PL.plist[-1].candle['time'] != dt:
+        raise Exception("Last pivot time does not match the passed datetime")
+    # check the 'type' of Pivot.pre segment
+    direction = PL.plist[-1].pre.type
+
+    if direction == -1 :
+        return 'long'
+    elif direction == 1 :
+        return 'short'
+    else:
+        raise Exception("Could not guess the file type")

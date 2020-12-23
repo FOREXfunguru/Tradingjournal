@@ -11,6 +11,11 @@ def clean_tmp():
     print("\nCleanup .xlsx file")
     os.remove(os.getenv('DATADIR')+"testCounter1.xlsx")
 
+def test_fetch_trades(tjO):
+    tlist = tjO.fetch_trades()
+
+    assert len(tlist) == 4
+
 def test_win_rate(tjO):
 
     (number_s, number_f, tot_pips) = tjO.win_rate(strats="counter")
@@ -19,8 +24,10 @@ def test_win_rate(tjO):
     assert number_f == 1
     assert tot_pips == 274.5
 
-def test_write_tradelist(tjO):
-    trade_list = tjO.fetch_tradelist()
-    trade_list.analyze()
+def test_write_tradelist(t_object_list, clean_tmp):
+    td = TradeJournal(url=os.getenv('DATADIR') + "/testCounter1.xlsx",
+                      worksheet="trading_journal")
 
-    tjO.write_tradelist(trade_list)
+    td.write_tradelist(t_object_list, 'outsheet')
+
+    assert os.path.exists(os.getenv('DATADIR') + "/testCounter1.xlsx") == 1

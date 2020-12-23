@@ -6,6 +6,8 @@ import os
 
 from trade_utils import *
 from trade import Trade
+from oanda.connect import Connect
+from candle.candlelist import CandleList
 
 @pytest.mark.parametrize("pair,"
                          "timeframe,"
@@ -161,3 +163,22 @@ def test_calc_trade_session(t_object):
 
     t_object.run_trade()
     assert calc_trade_session(t_object) == 'european,namerican'
+
+@pytest.mark.parametrize("start,"
+                         "end,"
+                         "type",
+                         [(datetime.datetime(2018, 4, 27, 22, 0, 0), datetime.datetime(2020, 4, 27, 21, 0, 0), 'long'),
+                          (datetime.datetime(2018, 3, 18, 21, 0, 0), datetime.datetime(2020, 3, 18, 21, 0, 0), 'short'),
+                          (datetime.datetime(2018, 2, 17, 21, 0, 0), datetime.datetime(2020, 2, 17, 21, 0, 0), 'long'),
+                          (datetime.datetime(2017, 8, 11, 21, 0, 0), datetime.datetime(2019, 8, 11, 21, 0, 0), 'short'),
+                          (datetime.datetime(2017, 1, 9, 21, 0, 0), datetime.datetime(2019, 1, 9, 21, 0, 0), 'short')])
+def test_get_trade_type(start, end, type):
+    conn = Connect(instrument='EUR_GBP',
+                   granularity='D')
+
+    res = conn.query(start=start.isoformat(),
+                     end=end.isoformat())
+
+    cl = CandleList(res)
+
+    assert type == get_trade_type(end, cl)

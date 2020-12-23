@@ -44,6 +44,26 @@ class TradeJournal(object):
             wb.create_sheet(worksheet)
             wb.save(str(self.url))
 
+    def fetch_trades(self):
+        '''
+        Function to fetch a list of Trade objects
+
+        Return
+        ------
+        list with trades
+        '''
+        trade_list = []
+        args = {}
+        for index, row in self.df.iterrows():
+            pair = row['id'].split(" ")[0]
+            args = {'pair': pair}
+            for c in row.keys():
+                args[c] = row[c]
+            t = Trade(**args)
+            trade_list.append(t)
+
+        return trade_list
+
     def win_rate(self, strats):
         '''
         Calculate win rate and pips balance
@@ -92,44 +112,28 @@ class TradeJournal(object):
 
         return number_s, number_f, tot_pips
 
-    """
-    def write_tradelist(self, trade_list):
+    def write_tradelist(self, trade_list, sheet_name):
         '''
         Write the TradeList to the Excel spreadsheet
         pointed by the trade_journal
 
         Parameters
         ----------
-        tradelist : TradeList, Required
+        trade_list : List of Trade objects, Required
+        sheet_name : worksheet name
 
         Returns
         -------
         Nothing
         '''
-        assert self.settings.has_option('trade_journal', 'worksheet_name'), \
-            "'worksheet_name' needs to be defined"
-
-        # get colnames to print in output worksheet from settings
-        assert self.settings.has_option('trade_journal', 'colnames'), "'colnames' needs to be defined"
-        colnames = self.settings.get('trade_journal', 'colnames').split(",")
 
         data = []
-        for t in trade_list.tlist:
+        colnames = []
+        for t in trade_list:
             row = []
-            for a in colnames:
-                if a == "session":
-                    row.append(t.calc_trade_session())
-                else:
-                    value = None
-                    try:
-                        value = getattr(t, a)
-                        if isinstance(value, PivotList):
-                            dt_l = value.print_pivots_dates()
-                            value = [d.strftime('%d/%m/%Y:%H:%M') for d in dt_l]
-                    except:
-                        tj_logger.warn("No value for attribute: {0}".format(a))
-                        value = "n.a."
-                    row.append(value)
+            colnames = sorted(t.__dict__.keys())
+            for key in colnames:
+                row.append(t.__dict__[key])
             data.append(row)
         df = pd.DataFrame(data, columns=colnames)
 
@@ -138,8 +142,6 @@ class TradeJournal(object):
         writer.book = book
         writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
         tj_logger.info("Creating new worksheet with trades with name: {0}".
-                       format(self.settings.get('trade_journal', 'worksheet_name')))
-        df.to_excel(writer, self.settings.get('trade_journal', 'worksheet_name'))
+                       format(sheet_name))
+        df.to_excel(writer, sheet_name)
         writer.save()
-
-    """
