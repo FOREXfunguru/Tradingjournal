@@ -57,9 +57,12 @@ class Trade(object):
     period : CandleList
              CandleList from trade.start-CONFIG.getint('counter', 'period') to trade.start
     trend_i : Start of the trend. Datetime
+    init : Bool
+           If true then invoke the 'self.__initclist()' function to initialize the self.period
+           class attribute. Default: False
     '''
 
-    def __init__(self, strat, start, type=None, entered=False, **kwargs):
+    def __init__(self, strat, start, type=None, entered=False, init=False, **kwargs):
         self.__dict__.update(kwargs)
         if not hasattr(self, 'TP') and not hasattr(self, 'RR'):
             raise Exception("Neither the RR not "
@@ -78,8 +81,9 @@ class Trade(object):
         self.strat = strat
         self.entered = entered
         self.type = type
-        self.period = self.__initclist()
-        self.trend_i = self.get_trend_i()
+        if init is True:
+            self.period = self.__initclist()
+            self.trend_i = self.get_trend_i()
 
     def __initclist(self):
         '''

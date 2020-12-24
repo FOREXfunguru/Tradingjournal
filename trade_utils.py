@@ -171,7 +171,7 @@ def get_trade_type(dt, clObj):
     if dt != clObj.data['candles'][-1]['time']:
         dt = clObj.data['candles'][-1]['time']
 
-    PL = clObj.get_pivotlist(th_bounces=CONFIG.getfloat('pivots', 'th_bounces'))
+    PL = clObj.get_pivotlist(th_bounces=0.01)
 
     # now, get the Pivot matching the datetime for the IC+1 candle
     if PL.plist[-1].candle['time'] != dt:
