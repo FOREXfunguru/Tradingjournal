@@ -82,12 +82,12 @@ class Trade(object):
         self.entered = entered
         self.type = type
         if init is True:
-            self.period = self.__initclist()
+            self.period = self.initclist()
             self.trend_i = self.get_trend_i()
 
-    def __initclist(self):
+    def initclist(self):
         '''
-        Private function to initialize the CandleList object that goes from self.trade.start
+        Function to initialize the CandleList object that goes from self.trade.start
         to CONFIG.getint('counter', 'period')
 
         Returns
@@ -166,6 +166,12 @@ class Trade(object):
     def run_trade(self, expires=None):
         '''
         Run the trade until conclusion from a start date
+
+        Parameter
+        ---------
+        expires : int
+                  Number of candles after start datetime to check
+                  for entry. Default: None
         '''
 
         t_logger.info("Run run_trade with id: {0}".format(self.id))

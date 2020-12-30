@@ -144,7 +144,7 @@ def test_max_min_rsi(pair, timeframe, id, start, type, SR, SL, TP, entry, avalue
                            24.1),
                           ('AUD_JPY', 'D', 'AUD_JPY 16MAR2010D', '2010-03-15 21:00:00', 'short', 82.63, 83.645, 80.32, 82.315,
                            13.4)])
-def test_set_pips_c_trend(pair, id, timeframe, start, type, SR, SL, TP, entry, pips_c_trend, clean_tmp):
+def test_calc_pips_c_trend(pair, id, timeframe, start, type, SR, SL, TP, entry, pips_c_trend, clean_tmp):
     t = Trade(
         id=id,
         start=start,

@@ -5,7 +5,6 @@ import pdb
 import logging
 from trade import Trade
 from openpyxl import load_workbook, Workbook
-from pivot_list import PivotList
 from config import CONFIG
 
 # create logger
@@ -44,9 +43,16 @@ class TradeJournal(object):
             wb.create_sheet(worksheet)
             wb.save(str(self.url))
 
-    def fetch_trades(self):
+    def fetch_trades(self, init_period=False):
         '''
         Function to fetch a list of Trade objects
+
+        Parameter
+        ---------
+        init_period : bool
+                      If true, then the CandleList
+                      used for the 'period' class attribute
+                      will be initialized. Default: False
 
         Return
         ------
@@ -59,7 +65,10 @@ class TradeJournal(object):
             args = {'pair': pair}
             for c in row.keys():
                 args[c] = row[c]
-            t = Trade(**args)
+            if init_period is True:
+                t = Trade(**args, init=True)
+            else:
+                t = Trade(**args)
             trade_list.append(t)
 
         return trade_list
@@ -126,15 +135,19 @@ class TradeJournal(object):
         -------
         Nothing
         '''
-
+        colnames = CONFIG.get("trade_journal", "colnames").split(",")
         data = []
-        colnames = []
         for t in trade_list:
             row = []
-            colnames = sorted(t.__dict__.keys())
             for key in colnames:
-                row.append(t.__dict__[key])
+                # some keys are not defined for some of the Trade
+                # objects
+                if key in t.__dict__:
+                    row.append(t.__dict__[key])
+                else:
+                    row.append("n.a.")
             data.append(row)
+
         df = pd.DataFrame(data, columns=colnames)
 
         book = load_workbook(self.url)
