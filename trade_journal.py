@@ -61,7 +61,7 @@ class TradeJournal(object):
         trade_list = []
         args = {}
         for index, row in self.df.iterrows():
-            pair = row['id'].split(" ")[0]
+            pair = row['id'].split(".")[0]
             args = {'pair': pair}
             for c in row.keys():
                 args[c] = row[c]

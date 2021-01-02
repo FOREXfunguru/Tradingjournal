@@ -55,7 +55,7 @@ class Trade(object):
     id : str, Required
          Id used for this object
     period : CandleList
-             CandleList from trade.start-CONFIG.getint('counter', 'period') to trade.start
+             CandleList from trade.start-CONFIG.getint('trade_bot', 'period_range') to trade.start
     trend_i : Start of the trend. Datetime
     init : Bool
            If true then invoke the 'self.__initclist()' function to initialize the self.period
@@ -88,13 +88,13 @@ class Trade(object):
     def initclist(self):
         '''
         Function to initialize the CandleList object that goes from self.trade.start
-        to CONFIG.getint('counter', 'period')
+        to CONFIG.getint('trade_bot', 'period_range')
 
         Returns
         -------
         CandleList
         '''
-        delta_period = periodToDelta(CONFIG.getint('counter', 'period'),
+        delta_period = periodToDelta(CONFIG.getint('trade_bot', 'period_range'),
                                      self.timeframe)
         delta_1 = periodToDelta(1, self.timeframe)
         start = self.start - delta_period  # get the start datetime for this CandleList period
@@ -105,12 +105,16 @@ class Trade(object):
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
 
+        ser_file = None
+        if CONFIG.has_option('general', 'ser_data_file'):
+            ser_file = CONFIG.get('general', 'ser_data_file')
+
         t_logger.debug("Fetching data")
         resp = conn.query(start=start.isoformat(),
-                          end=end.isoformat())
+                          end=end.isoformat(),
+                          infile=ser_file)
 
-        cl = CandleList(resp,
-                        type=self.type)
+        cl = CandleList(resp, type=self.type)
 
         cl.calc_rsi()
         return cl
@@ -123,7 +127,6 @@ class Trade(object):
         -------
         Datetime
         '''
-
         merged_s = self.period.calc_itrend()
 
         if self.type == "long":
@@ -146,6 +149,10 @@ class Trade(object):
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
 
+        ser_file = None
+        if CONFIG.has_option('general', 'ser_data_file'):
+            ser_file = CONFIG.get('general', 'ser_data_file')
+
         if isinstance(self.start, datetime) is True:
             astart = self.start
         else:
@@ -158,7 +165,8 @@ class Trade(object):
 
         t_logger.debug("Fetching data from API")
         res = conn.query(start=astart.isoformat(),
-                         end=anend.isoformat())
+                         end=anend.isoformat(),
+                         infile=ser_file)
 
         cl = CandleList(res, type=self.type)
         return cl
@@ -205,6 +213,10 @@ class Trade(object):
 
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
+
+        ser_file = None
+        if CONFIG.has_option('general', 'ser_data_file'):
+            ser_file = CONFIG.get('general', 'ser_data_file')
         count = 0
         self.entered = False
         for d in date_list:
@@ -215,7 +227,8 @@ class Trade(object):
                     break
             t_logger.debug("Fetching data from API")
             res = conn.query(start=d.isoformat(),
-                             count=1)
+                             count=1,
+                             infile=ser_file)
             cl = res['candles'][0]
             if self.entered is False:
                 entry_time = entry.get_cross_time(candle=cl,
