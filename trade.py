@@ -235,9 +235,6 @@ class Trade(object):
                                                   granularity=CONFIG.get('trade', 'granularity'))
                 if entry_time != 'n.a.':
                     t_logger.info("Trade entered")
-                    # modify self.start to the datetime
-                    # that Trade has actually entered
-                    self.start = d
                     self.entry_time = entry_time.isoformat()
                     self.entered = True
             if self.entered is True:
