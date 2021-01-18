@@ -3,8 +3,10 @@ import logging
 import pdb
 import datetime as dt
 
+from utils import *
 from harea import HArea
 from config import CONFIG
+from candle.candlelist_utils import *
 
 # create logger
 t_logger = logging.getLogger(__name__)
@@ -185,3 +187,29 @@ def get_trade_type(dt, clObj):
         return 'short'
     else:
         raise Exception("Could not guess the file type")
+
+def calc_adr(trade):
+    """
+    Function to calculate the ATR (avg timeframe rate)
+    from trade.start - CONFIG.getint('trade', 'period_atr')
+
+    Parameters
+    ----------
+    trade : Trade object
+            Used for the calculation
+
+    Returns
+    -------
+    float : ATR for selected period
+    """
+    pdb.set_trace()
+    delta_period = periodToDelta(CONFIG.getint('trade', 'period_atr'),
+                                 trade.timeframe)
+    delta_1 = periodToDelta(1, trade.timeframe)
+    start = trade.start - delta_period  # get the start datetime
+    end = trade.start + delta_1  # increase trade.start by one candle to include trade.start
+
+    c_list = trade.period.slice(start, end)
+
+    return calc_atr(c_list)
+    print("h")

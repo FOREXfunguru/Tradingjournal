@@ -58,13 +58,13 @@ def test_is_entry_onrsi(pair, id, timeframe, start, type, SR, SL, TP, entry, ent
                          "entry,"
                          "lasttime",
                          [('2018-12-03 22:00:00', 'long', 1.54123, 1.53398, 1.55752, 1.54334,
-                           datetime.datetime(2018, 1, 8, 22, 0)),
+                           datetime(2018, 1, 8, 22, 0)),
                           ('2018-09-11 22:00:00', 'short', 1.63118, 1.63633, 1.60202, 1.62763,
-                           datetime.datetime(2009, 11, 27, 22, 0)),
+                           datetime(2009, 11, 27, 22, 0)),
                           ('2017-05-05 22:00:00', 'short', 1.48820, 1.49191, 1.46223, 1.48004,
-                           datetime.datetime(2016, 9, 13, 21, 0)),
+                           datetime(2016, 9, 13, 21, 0)),
                           ('2019-05-23 22:00:00', 'short', 1.62344, 1.62682, 1.60294, 1.61739,
-                           datetime.datetime(2009, 11, 29, 22, 0))])
+                           datetime(2009, 11, 29, 22, 0))])
 def test_get_lasttime(start, type, SR, SL, TP, entry, lasttime):
     """
     Check function get_lasttime
@@ -167,11 +167,11 @@ def test_calc_trade_session(t_object):
 @pytest.mark.parametrize("start,"
                          "end,"
                          "type",
-                         [(datetime.datetime(2018, 4, 27, 22, 0, 0), datetime.datetime(2020, 4, 27, 21, 0, 0), 'long'),
-                          (datetime.datetime(2018, 3, 18, 21, 0, 0), datetime.datetime(2020, 3, 18, 21, 0, 0), 'short'),
-                          (datetime.datetime(2018, 2, 17, 21, 0, 0), datetime.datetime(2020, 2, 17, 21, 0, 0), 'long'),
-                          (datetime.datetime(2017, 8, 11, 21, 0, 0), datetime.datetime(2019, 8, 11, 21, 0, 0), 'short'),
-                          (datetime.datetime(2017, 1, 9, 21, 0, 0), datetime.datetime(2019, 1, 9, 21, 0, 0), 'short')])
+                         [(datetime(2018, 4, 27, 22, 0, 0), datetime(2020, 4, 27, 21, 0, 0), 'long'),
+                          (datetime(2018, 3, 18, 21, 0, 0), datetime(2020, 3, 18, 21, 0, 0), 'short'),
+                          (datetime(2018, 2, 17, 21, 0, 0), datetime(2020, 2, 17, 21, 0, 0), 'long'),
+                          (datetime(2017, 8, 11, 21, 0, 0), datetime(2019, 8, 11, 21, 0, 0), 'short'),
+                          (datetime(2017, 1, 9, 21, 0, 0), datetime(2019, 1, 9, 21, 0, 0), 'short')])
 def test_get_trade_type(start, end, type):
     conn = Connect(instrument='EUR_GBP',
                    granularity='D')
@@ -182,3 +182,8 @@ def test_get_trade_type(start, end, type):
     cl = CandleList(res)
 
     assert type == get_trade_type(end, cl)
+
+def test_calc_adr(t_object):
+    t_object.period = t_object.initclist()
+    calc_adr(t_object)
+    assert 0
