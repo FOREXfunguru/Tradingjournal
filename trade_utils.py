@@ -202,7 +202,6 @@ def calc_adr(trade):
     -------
     float : ATR for selected period
     """
-    pdb.set_trace()
     delta_period = periodToDelta(CONFIG.getint('trade', 'period_atr'),
                                  trade.timeframe)
     delta_1 = periodToDelta(1, trade.timeframe)
