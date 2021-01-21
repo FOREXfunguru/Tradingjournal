@@ -171,7 +171,7 @@ class Trade(object):
         cl = CandleList(res, type=self.type)
         return cl
 
-    def run_trade(self, expires=None):
+    def run_trade(self, expires=2):
         '''
         Run the trade until conclusion from a start date
 
@@ -179,7 +179,7 @@ class Trade(object):
         ---------
         expires : int
                   Number of candles after start datetime to check
-                  for entry. Default: None
+                  for entry. Default: 2
         '''
 
         t_logger.info("Run run_trade with id: {0}".format(self.id))

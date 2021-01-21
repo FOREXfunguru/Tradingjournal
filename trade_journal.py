@@ -3,6 +3,7 @@ import warnings
 import numpy as np
 import pdb
 import logging
+import math
 from trade import Trade
 from openpyxl import load_workbook, Workbook
 from config import CONFIG
@@ -99,12 +100,11 @@ class TradeJournal(object):
             args = {'pair': pair}
             for c in row.keys():
                 args[c] = row[c]
-
             t = Trade(**args)
             if t.strat not in strat_l:
                 continue
-            if not hasattr(t, 'outcome'):
-                t.run_trade()
+            if not hasattr(t, 'outcome') or math.isnan(t.outcome):
+                t.run_trade(expires=1)
             if t.outcome == 'success':
                 number_s += 1
             elif t.outcome == 'failure':
@@ -136,6 +136,7 @@ class TradeJournal(object):
         Nothing
         '''
         colnames = CONFIG.get("trade_journal", "colnames").split(",")
+
         data = []
         for t in trade_list:
             row = []
