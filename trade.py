@@ -105,14 +105,14 @@ class Trade(object):
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
 
-        ser_file = None
-        if CONFIG.has_option('general', 'ser_data_file'):
-            ser_file = CONFIG.get('general', 'ser_data_file')
+        ser_dir = None
+        if CONFIG.has_option('general', 'ser_data_dir'):
+            ser_dir = CONFIG.get('general', 'ser_data_dir')
 
         t_logger.debug("Fetching data")
         resp = conn.query(start=start.isoformat(),
                           end=end.isoformat(),
-                          infile=ser_file)
+                          indir=ser_dir)
 
         cl = CandleList(resp, type=self.type)
 
@@ -149,9 +149,9 @@ class Trade(object):
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
 
-        ser_file = None
-        if CONFIG.has_option('general', 'ser_data_file'):
-            ser_file = CONFIG.get('general', 'ser_data_file')
+        ser_dir = None
+        if CONFIG.has_option('general', 'ser_data_dir'):
+            ser_dir = CONFIG.get('general', 'ser_data_dir')
 
         if isinstance(self.start, datetime) is True:
             astart = self.start
@@ -166,7 +166,7 @@ class Trade(object):
         t_logger.debug("Fetching data from API")
         res = conn.query(start=astart.isoformat(),
                          end=anend.isoformat(),
-                         infile=ser_file)
+                         infile=ser_dir)
 
         cl = CandleList(res, type=self.type)
         return cl
@@ -214,9 +214,9 @@ class Trade(object):
         conn = Connect(instrument=self.pair,
                        granularity=self.timeframe)
 
-        ser_file = None
-        if CONFIG.has_option('general', 'ser_data_file'):
-            ser_file = CONFIG.get('general', 'ser_data_file')
+        ser_dir = None
+        if CONFIG.has_option('general', 'ser_data_dir'):
+            ser_dir = CONFIG.get('general', 'ser_data_dir')
         count = 0
         self.entered = False
         for d in date_list:
@@ -228,7 +228,7 @@ class Trade(object):
             t_logger.debug("Fetching data from API")
             res = conn.query(start=d.isoformat(),
                              count=1,
-                             infile=ser_file)
+                             infile=ser_dir)
             cl = res['candles'][0]
             if self.entered is False:
                 entry_time = entry.get_cross_time(candle=cl,
