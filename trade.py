@@ -166,7 +166,7 @@ class Trade(object):
         t_logger.debug("Fetching data from API")
         res = conn.query(start=astart.isoformat(),
                          end=anend.isoformat(),
-                         infile=ser_dir)
+                         indir=ser_dir)
 
         cl = CandleList(res, type=self.type)
         return cl
@@ -228,7 +228,7 @@ class Trade(object):
             t_logger.debug("Fetching data from API")
             res = conn.query(start=d.isoformat(),
                              count=1,
-                             infile=ser_dir)
+                             indir=ser_dir)
             cl = res['candles'][0]
             if self.entered is False:
                 entry_time = entry.get_cross_time(candle=cl,
@@ -250,7 +250,7 @@ class Trade(object):
                 if (failure_time is not None and failure_time != 'n.a.') or is_gap is True:
                     self.outcome = 'failure'
                     self.end = failure_time
-                    self.pips = float(calculate_pips(self.pair,abs(self.SL-self.entry)))*-1
+                    self.pips = float(calculate_pips(self.pair, abs(self.SL-self.entry)))*-1
                     t_logger.info("S/L was hit")
                     break
                 # will be n.a. if cl does not cross TP
