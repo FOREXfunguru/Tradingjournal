@@ -211,4 +211,107 @@ def calc_adr(trade):
     c_list = trade.period.slice(start, end)
 
     return calc_atr(c_list)
-    print("h")
+
+def prepare_trade(tb_obj, type, SL, ic, harea_sel, delta,
+                  add_pips):
+    '''
+    Prepare a Trade object
+    and check if it is taken
+
+    Parameters
+    ----------
+    tb_obj : TradeBot object
+    type : str,
+            Type of trade. 'short' or 'long'
+    SL : float,
+        Adjusted (by '__get_trade_type') SL price
+    ic : Candle object
+        Indecision candle for this trade
+    harea_sel : HArea of this trade
+        delta : Timedelta object corresponding to
+        the time that needs to be increased
+    add_pips : Number of pips above/below SL and entry
+        price to consider for recalculating
+        the SL and entry. Default : None
+
+    Returns
+    -------
+    Trade object
+    '''
+    startO = ic.time + delta
+    if type == 'short':
+        # entry price will be the low of IC
+        entry_p = getattr(ic, "low{0}".format(CONFIG.get('general', 'bit')))
+        if add_pips is not None:
+            SL = round(add_pips2price(tb_obj.pair,
+                                      SL, add_pips), 4)
+            entry_p = round(substract_pips2price(tb_obj.pair,
+                                                 entry_p, add_pips), 4)
+    elif type == 'long':
+        # entry price will be the high of IC
+        entry_p = getattr(ic, "high{0}".format(CONFIG.get('general', 'bit')))
+        if add_pips is not None:
+            entry_p = add_pips2price(tb_obj.pair,
+                                     entry_p, add_pips)
+            SL = substract_pips2price(tb_obj.pair,
+                                      SL, add_pips)
+
+    startO = ic.time+delta
+    t = Trade(
+        id='{0}.bot'.format(tb_obj.pair),
+        start=startO.strftime('%Y-%m-%d %H:%M:%S'),
+        pair=tb_obj.pair,
+        timeframe=tb_obj.timeframe,
+        type=type,
+        entry=entry_p,
+        SR=harea_sel.price,
+        SL=SL,
+        RR=CONFIG.getfloat('trade_bot', 'RR'),
+        strat='counter')
+
+    return t
+
+def adjust_SL(self, type, clObj, number=7):
+    '''
+    Function to adjust the SL price
+    to the most recent highest high/lowest low
+
+    Parameters
+    ----------
+    type : str
+            Trade type ('long'/ 'short')
+    clObj : CandleList obj
+    number : int
+        Number of candles to go back
+        to adjust the SL. Default: 7
+
+    Returns
+    -------
+    float: adjusted SL
+    '''
+
+    if type == 'short':
+        part = 'high{0}'.format(CONFIG.get('general', 'bit'))
+    elif type == 'long':
+        part = 'low{0}'.format(CONFIG.get('general', 'bit'))
+
+    SL = None
+    ix = 0
+    for c in reversed(clObj.data['candles']):
+        # go back 'number' candles
+        if ix == number:
+            break
+        ix += 1
+        price = c[part]
+        if SL is None:
+            SL = price
+            continue
+        if type == 'short':
+            if price > SL:
+                SL = price
+        if type == 'long':
+                if price < SL:
+                    SL = price
+
+        return SL
+
