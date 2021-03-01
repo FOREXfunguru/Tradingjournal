@@ -7,6 +7,7 @@ from utils import *
 from harea import HArea
 from config import CONFIG
 from candle.candlelist_utils import *
+from trade import Trade
 
 # create logger
 t_logger = logging.getLogger(__name__)
@@ -212,8 +213,7 @@ def calc_adr(trade):
 
     return calc_atr(c_list)
 
-def prepare_trade(tb_obj, type, SL, ic, harea_sel, delta,
-                  add_pips):
+def prepare_trade(tb_obj, type, SL, ic, harea_sel, delta, add_pips):
     '''
     Prepare a Trade object
     and check if it is taken
@@ -271,7 +271,7 @@ def prepare_trade(tb_obj, type, SL, ic, harea_sel, delta,
 
     return t
 
-def adjust_SL(self, type, clObj, number=7):
+def adjust_SL(type, clObj, number=7):
     '''
     Function to adjust the SL price
     to the most recent highest high/lowest low
@@ -294,7 +294,6 @@ def adjust_SL(self, type, clObj, number=7):
         part = 'high{0}'.format(CONFIG.get('general', 'bit'))
     elif type == 'long':
         part = 'low{0}'.format(CONFIG.get('general', 'bit'))
-
     SL = None
     ix = 0
     for c in reversed(clObj.data['candles']):
@@ -310,8 +309,8 @@ def adjust_SL(self, type, clObj, number=7):
             if price > SL:
                 SL = price
         if type == 'long':
-                if price < SL:
-                    SL = price
+            if price < SL:
+                SL = price
 
-        return SL
+    return SL
 
