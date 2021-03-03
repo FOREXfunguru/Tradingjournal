@@ -99,6 +99,8 @@ class Trade(object):
         delta_1 = periodToDelta(1, self.timeframe)
         start = self.start - delta_period  # get the start datetime for this CandleList period
         end = self.start + delta_1  # increase self.start by one candle to include self.start
+        if end > datetime.now():
+            end = datetime.now().replace(microsecond=0)
 
         t_logger.debug("Fetching candlelist for period: {0}-{1}".format(start, end))
 
