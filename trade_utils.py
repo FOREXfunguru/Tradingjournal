@@ -314,3 +314,29 @@ def adjust_SL(type, clObj, number=7):
 
     return SL
 
+def calculate_profit(trade):
+    '''
+    Function to calculate the profit of a certain
+    trade. Profit is defined as:
+    if abs(t.entry-t.SL) is = 1
+    Then abs(t.end-t.entry) is calculated taking this t.entry-t.SL
+    as the reference diff
+
+    Paramater
+    ---------
+    trade : Trade object
+
+    Returns
+    -------
+    float
+    '''
+    R = abs(float(trade.entry) - float(trade.SL))
+    mult = None
+    if trade.outcome == 'success':
+        mult = 1
+    elif trade.outcome == 'failure':
+        mult = -1
+    diff = abs(float(trade.end) - float(trade.entry))
+
+    profit = mult * (diff / R)
+    return round(profit, 2)

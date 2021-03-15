@@ -36,6 +36,7 @@ def calculate_pips(pair, price):
           Number of pips
     '''
 
+    assert price == float, "Error price needs to be float"
     pips = None
     (first, second) = pair.split("_")
     if first == 'JPY' or second == 'JPY':

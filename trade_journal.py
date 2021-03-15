@@ -4,6 +4,7 @@ import numpy as np
 import pdb
 import logging
 import math
+import re
 from trade import Trade
 from openpyxl import load_workbook, Workbook
 from config import CONFIG
@@ -62,7 +63,7 @@ class TradeJournal(object):
         trade_list = []
         args = {}
         for index, row in self.df.iterrows():
-            pair = row['id'].split(".")[0]
+            pair = re.split(r'\.| ', row['id'])[0]
             args = {'pair': pair}
             for c in row.keys():
                 args[c] = row[c]
