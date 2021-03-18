@@ -336,7 +336,7 @@ def calculate_profit(trade):
         mult = 1
     elif trade.outcome == 'failure':
         mult = -1
-    diff = abs(float(trade.end) - float(trade.entry))
+    diff = abs(float(trade.exit) - float(trade.entry))
 
     profit = mult * (diff / R)
     return round(profit, 2)

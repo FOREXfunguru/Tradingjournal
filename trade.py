@@ -36,6 +36,8 @@ class Trade(object):
          Time/date when the trade ended. i.e. 20-03-2017 08:20:00
     entry: float, Optional
            entry price
+    exit: float, Optional
+          exit price
     entry_time: datetime.optional
                 Datetime for price reaching the entry price
     type: str, Optional
@@ -252,6 +254,7 @@ class Trade(object):
                 if (failure_time is not None and failure_time != 'n.a.') or is_gap is True:
                     self.outcome = 'failure'
                     self.end = failure_time
+                    self.exit = SL.price
                     self.pips = float(calculate_pips(self.pair, abs(self.SL-self.entry)))*-1
                     t_logger.info("S/L was hit")
                     break
@@ -268,6 +271,7 @@ class Trade(object):
                     self.outcome = 'success'
                     t_logger.info("T/P was hit")
                     self.end = success_time
+                    self.exit = TP.price
                     self.pips = float(calculate_pips(self.pair, abs(self.TP - self.entry)))
                     break
         try:
