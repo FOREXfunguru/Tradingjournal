@@ -4,23 +4,6 @@ import datetime
 
 from trade import Trade
 
-def test_t_object_noTP():
-    '''Test the instantiation without TP and defined RR'''
-    td = Trade(
-        start="2017-04-20 14:00:00",
-        end="2017-04-26 14:00:00",
-        entry=0.75308,
-        SL=0.74889,
-        RR=1.5,
-        pair="AUD/USD",
-        type="long",
-        timeframe="H8",
-        strat="counter_b2",
-        id="AUD_USD 20APR2017H8")
-
-    # check that td.TP has been calculated
-    assert td.TP == 0.7594
-
 def test_fetch_candlelist(t_object):
     '''
     This test checks the function to return a CandleList object 
